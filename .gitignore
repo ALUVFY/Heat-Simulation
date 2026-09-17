@@ -1,0 +1,9 @@
+# C++ build files
+build/
+
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
