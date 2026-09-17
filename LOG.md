@@ -83,7 +83,7 @@ git push -u origin main
 
 ### 阶段一总结
 
-完成了 **WSL + C++ + CMake + GDB + Git + Python** 基础环境搭建，并完成项目初始化及 GitHub 远程仓库连接。
+完成 **WSL + C++ + CMake + GDB + Git + Python** 基础环境搭建，并完成项目初始化及 GitHub 远程仓库连接。
 
 下一阶段进入二维热传导问题的**数学建模与数值方法设计**。
 
