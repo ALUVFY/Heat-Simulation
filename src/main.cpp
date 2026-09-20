@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 int main() {
 
@@ -26,13 +27,13 @@ const double dt = 0.005;
 // 稳定性系数
 const double r = alpha * dt / (dx * dx);
 
-// 当前时刻的温度
+// 当前温度
 std::vector<double> temperature(
     nx * ny,
     initial_temperature
 );
 
-// 下一时刻的温度
+// 下一时刻温度
 std::vector<double> new_temperature(
     nx * ny,
     initial_temperature
@@ -48,7 +49,7 @@ const int center_index =
 // 设置中心高温
 temperature[center_index] = hot_temperature;
 
-// 模拟时间
+// 模拟步数
 const int steps = 100;
 
 // 时间迭代
@@ -61,7 +62,7 @@ for (int step = 0; step < steps; ++step) {
 
             const int index = i + j * nx;
 
-            // 四个方向的邻居
+            // 四个方向的温度
             const double left =
                 temperature[index - 1];
 
@@ -74,7 +75,7 @@ for (int step = 0; step < steps; ++step) {
             const double up =
                 temperature[index + nx];
 
-            // 二维热传导有限差分公式
+            // 热传导有限差分公式
             new_temperature[index] =
                 temperature[index]
                 + r * (
@@ -87,7 +88,7 @@ for (int step = 0; step < steps; ++step) {
         }
     }
 
-    // 保持边界温度为 20 ℃
+    // 保持边界温度
     for (int i = 0; i < nx; ++i) {
 
         new_temperature[i] =
@@ -106,38 +107,59 @@ for (int step = 0; step < steps; ++step) {
             initial_temperature;
     }
 
-    // 下一时刻成为当前时刻
+    // 更新当前温度
     temperature.swap(new_temperature);
 }
 
-// 输出最终结果
+// 创建数据文件
+std::ofstream output("../data/temperature.csv");
+
+if (!output) {
+    std::cerr << "Failed to open data/temperature.csv\n";
+    return 1;
+}
+
+// 写入 CSV 表头
+output << "x,y,temperature\n";
+
+// 写入每个网格点
+for (int j = 0; j < ny; ++j) {
+
+    for (int i = 0; i < nx; ++i) {
+
+        const int index = i + j * nx;
+
+        const double x = i * dx;
+        const double y = j * dy;
+
+        output << x << ","
+               << y << ","
+               << temperature[index]
+               << "\n";
+    }
+}
+
+output.close();
+
+// 输出结果
 std::cout << "Heat Simulation\n";
 std::cout << "-------------------------\n";
 
 std::cout << "Grid: "
           << nx << " x " << ny << '\n';
 
-std::cout << "dx = "
-          << dx << " m\n";
-
-std::cout << "dy = "
-          << dy << " m\n";
-
-std::cout << "alpha = "
-          << alpha << " m^2/s\n";
-
-std::cout << "dt = "
-          << dt << " s\n";
-
-std::cout << "Steps = "
+std::cout << "Steps: "
           << steps << '\n';
 
-std::cout << "Simulation time = "
-          << steps * dt << " s\n";
+std::cout << "Simulation time: "
+          << steps * dt
+          << " s\n";
 
-std::cout << "Center temperature = "
+std::cout << "Center temperature: "
           << temperature[center_index]
           << " C\n";
+
+std::cout << "Output: data/temperature.csv\n";
 
 return 0;
 
